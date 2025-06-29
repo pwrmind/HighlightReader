@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Reader - Улучшенное приложение для чтения</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Roboto+Slab:wght@300;400&display=swap" rel="stylesheet">
+    <title>Text Reader - Метод Shpritz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #2c3e50;       /* 60% - основной цвет */
             --secondary: #34495e;     /* 30% - вторичный цвет */
-            --accent: #3498db;       /* 10% - акцентный цвет */
+            --accent: #e74c3c;        /* 10% - акцентный цвет (красный для Shpritz) */
             --text-light: #ecf0f1;
             --text-dark: #2c3e50;
             --success: #2ecc71;
             --warning: #f39c12;
+            --shpritz-bg: rgba(231, 76, 60, 0.15);
         }
         
         * {
@@ -23,9 +24,9 @@
         }
         
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            color: var(--text-light);
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -34,33 +35,66 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         header {
-            background-color: var(--primary);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: var(--text-light);
-            padding: 25px 30px;
+            padding: 30px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
         }
         
         header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            font-weight: 600;
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         header p {
-            font-size: 1.1rem;
-            opacity: 0.85;
-            max-width: 600px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
             margin: 0 auto;
-            font-family: 'Roboto Slab', serif;
+            line-height: 1.6;
+        }
+        
+        .shpritz-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
         }
         
         .app-content {
@@ -69,7 +103,7 @@
             gap: 30px;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .app-content {
                 flex-direction: column;
             }
@@ -79,45 +113,57 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
         }
         
         .output-section {
             flex: 1;
             display: flex;
             flex-direction: column;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
         }
         
         .section-title {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-light);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
         }
         
         .section-title i {
             color: var(--accent);
+            font-size: 1.8rem;
         }
         
         #textToRead {
             width: 100%;
             height: 250px;
-            padding: 18px;
-            border: 2px solid #e0e6ed;
-            border-radius: 10px;
-            font-family: 'Roboto Slab', serif;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             font-size: 1.1rem;
-            line-height: 1.6;
+            line-height: 1.7;
             resize: vertical;
             transition: all 0.3s ease;
             margin-bottom: 20px;
+            color: var(--text-light);
+            font-family: inherit;
         }
         
         #textToRead:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.3);
             outline: none;
+            background: rgba(0, 0, 0, 0.35);
         }
         
         .controls {
@@ -128,239 +174,338 @@
         }
         
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1.05rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            flex: 1;
+            min-width: 180px;
         }
         
         .btn-primary {
-            background-color: var(--accent);
+            background: linear-gradient(to right, var(--accent), #c0392b);
             color: white;
-            flex: 1;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
         }
         
         .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(231, 76, 60, 0.6);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(1px);
         }
         
         .btn-secondary {
-            background-color: var(--secondary);
+            background: linear-gradient(to right, #3498db, #2980b9);
             color: white;
-            flex: 1;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
         
         .btn-secondary:hover {
-            background-color: #2c3e50;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(52, 152, 219, 0.6);
         }
         
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
+            transform: none !important;
+            box-shadow: none !important;
         }
         
         .speed-control {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-top: 15px;
-            padding: 10px 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
         }
         
         .speed-control label {
             font-weight: 500;
+            min-width: 140px;
         }
         
         #speedSlider {
             flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        #speedSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
         }
         
         #speedValue {
-            min-width: 40px;
+            min-width: 70px;
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.2rem;
             color: var(--accent);
         }
         
         #highlighterBlock {
             width: 100%;
             height: 350px;
-            padding: 20px;
-            border: 2px solid #e0e6ed;
-            border-radius: 10px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
             overflow-y: auto;
-            background-color: #fcfdfe;
-            font-family: 'Roboto Slab', serif;
-            font-size: 1.2rem;
-            line-height: 1.8;
+            font-size: 1.4rem;
+            line-height: 2.2;
             position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .word {
             display: inline-block;
-            margin: 0 3px;
-            padding: 2px 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
+            margin: 0 4px;
+            padding: 3px 6px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
         }
         
         .highlight {
-            background-color: rgba(52, 152, 219, 0.3);
-            color: var(--primary);
-            font-weight: 500;
+            background-color: var(--shpritz-bg);
             transform: scale(1.05);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+        
+        .middle-part {
+            color: white;
+            font-weight: 800;
+            background: var(--accent);
+            padding: 0 4px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
         }
         
         .status-bar {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            padding: 10px 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            font-size: 1rem;
         }
         
         .progress-container {
             flex: 1;
-            height: 8px;
-            background-color: #e0e6ed;
-            border-radius: 4px;
-            margin-top: 5px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 8px;
             overflow: hidden;
         }
         
         .progress-bar {
             height: 100%;
-            background-color: var(--success);
+            background: linear-gradient(to right, var(--accent), #c0392b);
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.4s ease;
         }
         
         footer {
             text-align: center;
-            padding: 20px;
-            background-color: #f8f9fa;
-            color: var(--secondary);
-            font-size: 0.9rem;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
         }
         
         .instructions {
-            background-color: #e3f2fd;
+            background: rgba(231, 76, 60, 0.1);
             border-left: 4px solid var(--accent);
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin-top: 20px;
-            font-size: 0.95rem;
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 25px;
+            font-size: 1rem;
         }
         
         .instructions h3 {
-            margin-bottom: 8px;
-            color: var(--primary);
+            margin-bottom: 12px;
+            color: var(--accent);
         }
         
         .instructions ul {
-            padding-left: 20px;
+            padding-left: 25px;
         }
         
         .instructions li {
-            margin-bottom: 6px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .shpritz-explanation {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .shpritz-explanation h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
         }
         
         .highlight-example {
             display: inline-block;
-            background-color: rgba(52, 152, 219, 0.3);
+            background: var(--shpritz-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin: 0 3px;
+        }
+        
+        .middle-example {
+            background: var(--accent);
+            color: white;
+            font-weight: bold;
             padding: 0 4px;
             border-radius: 3px;
-            font-weight: 500;
+        }
+        
+        .word-counter {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+        
+        /* Полоса прокрутки */
+        #highlighterBlock::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #highlighterBlock::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        #highlighterBlock::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Text Reader</h1>
-            <p>Улучшенное приложение для чтения текста с выделением слов. Введите текст и наблюдайте, как слова подсвечиваются одно за другим.</p>
+            <div class="header-content">
+                <h1>УСКОРИТЕЛЬ ЧТЕНИЯ</h1>
+                <p>Инновационное приложение для скорочтения с использованием метода Shpritz</p>
+                <div class="shpritz-badge">Технология Shpritz®</div>
+            </div>
         </header>
         
         <div class="app-content">
             <div class="input-section">
                 <h2 class="section-title">
-                    <i>📝</i> Ввод текста
+                    <i class="fas fa-edit"></i> Ввод текста
                 </h2>
                 
-                <textarea id="textToRead" placeholder="Введите или вставьте текст для чтения здесь...">Текст для чтения — это любой письменный материал, который предназначен для прочтения. Это могут быть книги, статьи, блоги, документы и многое другое. Чтение текстов развивает когнитивные способности, улучшает словарный запас и расширяет кругозор. Наше приложение поможет вам читать тексты более эффективно, последовательно выделяя каждое слово.</textarea>
+                <textarea id="textToRead" placeholder="Введите текст для чтения...">Метод Shpritz - это революционный подход к скорочтению, разработанный для увеличения скорости восприятия текста. В основе метода лежит выделение центральной части слова, что позволяет глазу фокусироваться на самой важной информации. Исследования показывают, что при традиционном чтении взгляд человека фиксируется не на начале слова, а ближе к его центру. Техника Shpritz использует этот естественный механизм, искусственно выделяя центральные буквы в словах. При регулярном использовании этой методики можно увеличить скорость чтения в 2-3 раза без потери понимания текста. Попробуйте сами - введите любой текст и нажмите "Начать чтение".</textarea>
+                
+                <div class="word-counter">
+                    <span>Слов: <span id="wordCount">0</span></span>
+                    <span>Символов: <span id="charCount">0</span></span>
+                </div>
                 
                 <div class="controls">
                     <button id="read" class="btn btn-primary">
-                        <i>▶️</i> Начать чтение
+                        <i class="fas fa-play"></i> Начать чтение
                     </button>
-                    <button id="stop" class="btn btn-secondary" disabled>
-                        <i>⏹️</i> Остановить
+                    <button id="pause" class="btn btn-secondary">
+                        <i class="fas fa-pause"></i> Пауза
+                    </button>
+                    <button id="stop" class="btn btn-secondary">
+                        <i class="fas fa-stop"></i> Стоп
                     </button>
                 </div>
                 
                 <div class="speed-control">
-                    <label for="speedSlider">Скорость чтения:</label>
-                    <input type="range" id="speedSlider" min="50" max="500" value="250">
-                    <span id="speedValue">250 мс</span>
+                    <label for="speedSlider"><i class="fas fa-tachometer-alt"></i> Скорость чтения:</label>
+                    <input type="range" id="speedSlider" min="50" max="500" value="200">
+                    <span id="speedValue">200 мс</span>
                 </div>
                 
-                <div class="instructions">
-                    <h3>Как использовать это приложение:</h3>
+                <div class="shpritz-explanation">
+                    <h3><i class="fas fa-lightbulb"></i> Как работает метод Shpritz?</h3>
+                    <p>Техника Shpritz фокусируется на центральной части каждого слова, выделяя её. Это соответствует естественному движению глаз при чтении, когда мы фиксируемся не на начале слова, а ближе к его середине. Такой подход позволяет:</p>
                     <ul>
-                        <li>Введите или вставьте текст в поле ввода</li>
-                        <li>Нажмите "Начать чтение", чтобы запустить процесс</li>
-                        <li>Используйте ползунок для регулировки скорости</li>
-                        <li>Нажмите "Остановить" в любой момент для паузы</li>
-                        <li>Текущее слово выделяется как <span class="highlight-example">этот пример</span></li>
+                        <li>Увеличить скорость чтения в 2-3 раза</li>
+                        <li>Улучшить понимание текста</li>
+                        <li>Снизить утомляемость глаз</li>
+                        <li>Уменьшить количество регрессий (возвратов к прочитанному)</li>
                     </ul>
                 </div>
             </div>
             
             <div class="output-section">
                 <h2 class="section-title">
-                    <i>👁️</i> Область чтения
+                    <i class="fas fa-eye"></i> Область чтения
                 </h2>
                 
                 <div id="highlighterBlock"></div>
                 
                 <div class="status-bar">
                     <div>
-                        Статус: <span id="status">Готов к работе</span>
+                        <i class="fas fa-info-circle"></i> Статус: <span id="status">Готов к работе</span>
                     </div>
                     <div>
-                        Прогресс: <span id="progress">0%</span>
+                        <i class="fas fa-chart-line"></i> Прогресс: <span id="progress">0%</span>
                     </div>
                 </div>
                 
                 <div class="progress-container">
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-graduation-cap"></i> Советы по использованию</h3>
+                    <ul>
+                        <li>Начинайте со скорости 250-300 мс и постепенно уменьшайте</li>
+                        <li>Старайтесь не проговаривать слова про себя (избегайте субвокализации)</li>
+                        <li>Фокусируйтесь на <span class="middle-example">выделенных</span> частях слов</li>
+                        <li>Используйте приложение регулярно по 10-15 минут в день</li>
+                        <li>После остановки перескажите прочитанное для проверки понимания</li>
+                    </ul>
+                </div>
             </div>
         </div>
         
         <footer>
-            <p>Text Reader v2.0 | Улучшенное приложение для чтения с выделением слов | Принцип дизайна 60-30-10</p>
+            <p>Text Reader Shpritz Edition v3.0 | Метод скорочтения с выделением центра слова | Принцип дизайна 60-30-10</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const readButton = document.getElementById('read');
+            const pauseButton = document.getElementById('pause');
             const stopButton = document.getElementById('stop');
             const textToRead = document.getElementById('textToRead');
             const highlighterBlock = document.getElementById('highlighterBlock');
@@ -369,19 +514,32 @@
             const statusElement = document.getElementById('status');
             const progressElement = document.getElementById('progress');
             const progressBar = document.getElementById('progressBar');
+            const wordCountElement = document.getElementById('wordCount');
+            const charCountElement = document.getElementById('charCount');
             
             let words = [];
             let currentIndex = 0;
             let intervalId = null;
-            let readingSpeed = 250;
+            let readingSpeed = 200;
+            let isPlaying = false;
+            
+            // Обновление счетчиков слов и символов
+            function updateCounters() {
+                const text = textToRead.value;
+                const wordsCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+                wordCountElement.textContent = wordsCount;
+                charCountElement.textContent = text.length;
+            }
+            
+            textToRead.addEventListener('input', updateCounters);
+            updateCounters();
             
             // Обновление отображения скорости
             speedSlider.addEventListener('input', function() {
                 readingSpeed = parseInt(this.value);
                 speedValue.textContent = readingSpeed + ' мс';
                 
-                // Если чтение активно, обновляем интервал
-                if (intervalId !== null) {
+                if (isPlaying) {
                     clearInterval(intervalId);
                     intervalId = setInterval(highlightNextWord, readingSpeed);
                 }
@@ -389,16 +547,13 @@
             
             // Функция для запуска чтения
             readButton.addEventListener('click', function() {
-                // Остановить предыдущее чтение, если оно активно
-                if (intervalId !== null) {
-                    clearInterval(intervalId);
-                }
+                if (isPlaying) return;
                 
                 const text = textToRead.value.trim();
                 
                 if (text === '') {
                     statusElement.textContent = 'Ошибка: Введите текст для чтения';
-                    statusElement.style.color = 'red';
+                    statusElement.style.color = '#ff7979';
                     return;
                 }
                 
@@ -407,7 +562,7 @@
                 
                 if (words.length === 0) {
                     statusElement.textContent = 'Ошибка: Нет слов для чтения';
-                    statusElement.style.color = 'red';
+                    statusElement.style.color = '#ff7979';
                     return;
                 }
                 
@@ -417,53 +572,107 @@
                 // Отображаем слова
                 displayWords();
                 
-                // Активируем кнопку остановки
-                stopButton.disabled = false;
-                readButton.disabled = true;
-                
                 // Обновляем статус
                 statusElement.textContent = 'Чтение...';
-                statusElement.style.color = '#2c3e50';
+                statusElement.style.color = '#ffffff';
                 
                 // Запускаем интервал
+                isPlaying = true;
                 intervalId = setInterval(highlightNextWord, readingSpeed);
+                
+                // Обновляем состояние кнопок
+                readButton.disabled = true;
+                pauseButton.disabled = false;
+                stopButton.disabled = false;
+            });
+            
+            // Функция для паузы
+            pauseButton.addEventListener('click', function() {
+                if (!isPlaying) return;
+                
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    isPlaying = false;
+                    statusElement.textContent = 'Пауза';
+                    pauseButton.innerHTML = '<i class="fas fa-play"></i> Продолжить';
+                } else {
+                    intervalId = setInterval(highlightNextWord, readingSpeed);
+                    isPlaying = true;
+                    statusElement.textContent = 'Чтение...';
+                    pauseButton.innerHTML = '<i class="fas fa-pause"></i> Пауза';
+                }
             });
             
             // Функция для остановки чтения
             stopButton.addEventListener('click', function() {
-                if (intervalId !== null) {
+                if (intervalId) {
                     clearInterval(intervalId);
                     intervalId = null;
-                    
-                    readButton.disabled = false;
-                    stopButton.disabled = true;
-                    
-                    statusElement.textContent = 'Чтение остановлено';
                 }
+                
+                isPlaying = false;
+                statusElement.textContent = 'Чтение остановлено';
+                
+                // Снимаем выделение с текущего слова
+                const currentWord = document.querySelector(`.word[data-index="${currentIndex}"]`);
+                if (currentWord) {
+                    currentWord.classList.remove('highlight');
+                }
+                
+                // Обновляем состояние кнопок
+                readButton.disabled = false;
+                pauseButton.disabled = true;
+                stopButton.disabled = true;
+                pauseButton.innerHTML = '<i class="fas fa-pause"></i> Пауза';
             });
             
-            // Отображение слов в блоке чтения
+            // Отображение слов в блоке чтения с разбивкой на части
             function displayWords() {
                 highlighterBlock.innerHTML = '';
                 
                 words.forEach((word, index) => {
                     const wordElement = document.createElement('span');
                     wordElement.classList.add('word');
-                    wordElement.textContent = word + ' ';
                     wordElement.dataset.index = index;
+                    
+                    // Разбиваем слово на части для метода Shpritz
+                    const len = word.length;
+                    let middleStart, middleEnd;
+                    
+                    if (len % 2 === 0) {
+                        // Четное количество букв: выделяем две центральные
+                        middleStart = len/2 - 1;
+                        middleEnd = middleStart + 2;
+                    } else {
+                        // Нечетное: выделяем одну центральную
+                        middleStart = Math.floor(len/2);
+                        middleEnd = middleStart + 1;
+                    }
+                    
+                    const startPart = word.substring(0, middleStart);
+                    const middlePart = word.substring(middleStart, middleEnd);
+                    const endPart = word.substring(middleEnd);
+                    
+                    wordElement.innerHTML = `
+                        ${startPart}<span class="middle-part">${middlePart}</span>${endPart}
+                    `;
+                    
                     highlighterBlock.appendChild(wordElement);
+                    highlighterBlock.appendChild(document.createTextNode(' '));
                 });
                 
                 // Сброс прогресса
                 updateProgress(0);
             }
             
-            // Подсветка следующего слова
+            // Подсветка следующего слова по методу Shpritz
             function highlightNextWord() {
-                // Удаляем подсветку со всех слов
-                document.querySelectorAll('.word').forEach(word => {
-                    word.classList.remove('highlight');
-                });
+                // Удаляем подсветку с предыдущего слова
+                const prevWord = document.querySelector(`.word[data-index="${currentIndex - 1}"]`);
+                if (prevWord) {
+                    prevWord.classList.remove('highlight');
+                }
                 
                 // Подсвечиваем текущее слово
                 const currentWord = document.querySelector(`.word[data-index="${currentIndex}"]`);
@@ -489,11 +698,12 @@
                 if (currentIndex >= words.length) {
                     clearInterval(intervalId);
                     intervalId = null;
-                    
-                    readButton.disabled = false;
-                    stopButton.disabled = true;
+                    isPlaying = false;
                     
                     statusElement.textContent = 'Чтение завершено';
+                    readButton.disabled = false;
+                    pauseButton.disabled = true;
+                    stopButton.disabled = true;
                 }
             }
             
