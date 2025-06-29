@@ -1,59 +1,511 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <style>
-            #textToRead {
-                width: 400px;
-                height: 200px;
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Reader - Улучшенное приложение для чтения</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Roboto+Slab:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;       /* 60% - основной цвет */
+            --secondary: #34495e;     /* 30% - вторичный цвет */
+            --accent: #3498db;       /* 10% - акцентный цвет */
+            --text-light: #ecf0f1;
+            --text-dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: var(--text-light);
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto;
+            font-family: 'Roboto Slab', serif;
+        }
+        
+        .app-content {
+            display: flex;
+            padding: 30px;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-content {
+                flex-direction: column;
             }
-
-            #highlighterBlock {
-                width: 400px;
-            }
-
-            #highlighterBlock > pre {
-                white-space: normal;
-                text-align: justify;
-            }
-
-            #highlighter {
-                color: darkred;
-                opacity: 0.4;
-            }
-        </style>
-    </head>
-    <body>
-        <div><textarea id="textToRead"></textarea></div>
-        <input id="read" type="button" value="Read!">
-        <div id="highlighterBlock">
-            <pre></pre>
-        </div>
-
-        <script>
-            var readButton = document.querySelector("#read");
-
-            readButton.onclick = function () {
-                var textToRead = document.querySelector("#textToRead").value;
-                var highlighter = document.querySelector("#highlighterBlock > pre");
-
-                var offset = 0;
-
-                var highlighterInterval = setInterval(function() {
-                    if(textToRead.indexOf(" ", offset), offset < textToRead.indexOf(" ", offset)) {
-                        highlighter.innerHTML = selector(textToRead, offset);
-                        offset = textToRead.indexOf(" ", offset) + 1;
-                    } else {
-                        clearInterval(highlighterInterval);
-                        console.log("stop");
-                    }
-                }, 250);
-
-                function selector(s, offset) {
-                    return "<span id='highlighter'>" + s.substring(0, s.indexOf(" ", offset)) + "</span>" + s.substring(s.indexOf(" ", offset + 1));
-                }
-            };
+        }
+        
+        .input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .output-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--accent);
+        }
+        
+        #textToRead {
+            width: 100%;
+            height: 250px;
+            padding: 18px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-family: 'Roboto Slab', serif;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        #textToRead:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2c3e50;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .speed-control label {
+            font-weight: 500;
+        }
+        
+        #speedSlider {
+            flex: 1;
+        }
+        
+        #speedValue {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        #highlighterBlock {
+            width: 100%;
+            height: 350px;
+            padding: 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            overflow-y: auto;
+            background-color: #fcfdfe;
+            font-family: 'Roboto Slab', serif;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            position: relative;
+        }
+        
+        .word {
+            display: inline-block;
+            margin: 0 3px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .highlight {
+            background-color: rgba(52, 152, 219, 0.3);
+            color: var(--primary);
+            font-weight: 500;
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            flex: 1;
+            height: 8px;
+            background-color: #e0e6ed;
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .instructions {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 6px;
+        }
+        
+        .highlight-example {
+            display: inline-block;
+            background-color: rgba(52, 152, 219, 0.3);
+            padding: 0 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Text Reader</h1>
+            <p>Улучшенное приложение для чтения текста с выделением слов. Введите текст и наблюдайте, как слова подсвечиваются одно за другим.</p>
+        </header>
+        
+        <div class="app-content">
+            <div class="input-section">
+                <h2 class="section-title">
+                    <i>📝</i> Ввод текста
+                </h2>
+                
+                <textarea id="textToRead" placeholder="Введите или вставьте текст для чтения здесь...">Текст для чтения — это любой письменный материал, который предназначен для прочтения. Это могут быть книги, статьи, блоги, документы и многое другое. Чтение текстов развивает когнитивные способности, улучшает словарный запас и расширяет кругозор. Наше приложение поможет вам читать тексты более эффективно, последовательно выделяя каждое слово.</textarea>
+                
+                <div class="controls">
+                    <button id="read" class="btn btn-primary">
+                        <i>▶️</i> Начать чтение
+                    </button>
+                    <button id="stop" class="btn btn-secondary" disabled>
+                        <i>⏹️</i> Остановить
+                    </button>
+                </div>
+                
+                <div class="speed-control">
+                    <label for="speedSlider">Скорость чтения:</label>
+                    <input type="range" id="speedSlider" min="50" max="500" value="250">
+                    <span id="speedValue">250 мс</span>
+                </div>
+                
+                <div class="instructions">
+                    <h3>Как использовать это приложение:</h3>
+                    <ul>
+                        <li>Введите или вставьте текст в поле ввода</li>
+                        <li>Нажмите "Начать чтение", чтобы запустить процесс</li>
+                        <li>Используйте ползунок для регулировки скорости</li>
+                        <li>Нажмите "Остановить" в любой момент для паузы</li>
+                        <li>Текущее слово выделяется как <span class="highlight-example">этот пример</span></li>
+                    </ul>
+                </div>
+            </div>
             
-        </script>
-    </body>
+            <div class="output-section">
+                <h2 class="section-title">
+                    <i>👁️</i> Область чтения
+                </h2>
+                
+                <div id="highlighterBlock"></div>
+                
+                <div class="status-bar">
+                    <div>
+                        Статус: <span id="status">Готов к работе</span>
+                    </div>
+                    <div>
+                        Прогресс: <span id="progress">0%</span>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Text Reader v2.0 | Улучшенное приложение для чтения с выделением слов | Принцип дизайна 60-30-10</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const readButton = document.getElementById('read');
+            const stopButton = document.getElementById('stop');
+            const textToRead = document.getElementById('textToRead');
+            const highlighterBlock = document.getElementById('highlighterBlock');
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValue = document.getElementById('speedValue');
+            const statusElement = document.getElementById('status');
+            const progressElement = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            
+            let words = [];
+            let currentIndex = 0;
+            let intervalId = null;
+            let readingSpeed = 250;
+            
+            // Обновление отображения скорости
+            speedSlider.addEventListener('input', function() {
+                readingSpeed = parseInt(this.value);
+                speedValue.textContent = readingSpeed + ' мс';
+                
+                // Если чтение активно, обновляем интервал
+                if (intervalId !== null) {
+                    clearInterval(intervalId);
+                    intervalId = setInterval(highlightNextWord, readingSpeed);
+                }
+            });
+            
+            // Функция для запуска чтения
+            readButton.addEventListener('click', function() {
+                // Остановить предыдущее чтение, если оно активно
+                if (intervalId !== null) {
+                    clearInterval(intervalId);
+                }
+                
+                const text = textToRead.value.trim();
+                
+                if (text === '') {
+                    statusElement.textContent = 'Ошибка: Введите текст для чтения';
+                    statusElement.style.color = 'red';
+                    return;
+                }
+                
+                // Разбиваем текст на слова
+                words = text.split(/\s+/).filter(word => word.length > 0);
+                
+                if (words.length === 0) {
+                    statusElement.textContent = 'Ошибка: Нет слов для чтения';
+                    statusElement.style.color = 'red';
+                    return;
+                }
+                
+                // Сбрасываем индекс
+                currentIndex = 0;
+                
+                // Отображаем слова
+                displayWords();
+                
+                // Активируем кнопку остановки
+                stopButton.disabled = false;
+                readButton.disabled = true;
+                
+                // Обновляем статус
+                statusElement.textContent = 'Чтение...';
+                statusElement.style.color = '#2c3e50';
+                
+                // Запускаем интервал
+                intervalId = setInterval(highlightNextWord, readingSpeed);
+            });
+            
+            // Функция для остановки чтения
+            stopButton.addEventListener('click', function() {
+                if (intervalId !== null) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    
+                    readButton.disabled = false;
+                    stopButton.disabled = true;
+                    
+                    statusElement.textContent = 'Чтение остановлено';
+                }
+            });
+            
+            // Отображение слов в блоке чтения
+            function displayWords() {
+                highlighterBlock.innerHTML = '';
+                
+                words.forEach((word, index) => {
+                    const wordElement = document.createElement('span');
+                    wordElement.classList.add('word');
+                    wordElement.textContent = word + ' ';
+                    wordElement.dataset.index = index;
+                    highlighterBlock.appendChild(wordElement);
+                });
+                
+                // Сброс прогресса
+                updateProgress(0);
+            }
+            
+            // Подсветка следующего слова
+            function highlightNextWord() {
+                // Удаляем подсветку со всех слов
+                document.querySelectorAll('.word').forEach(word => {
+                    word.classList.remove('highlight');
+                });
+                
+                // Подсвечиваем текущее слово
+                const currentWord = document.querySelector(`.word[data-index="${currentIndex}"]`);
+                if (currentWord) {
+                    currentWord.classList.add('highlight');
+                    
+                    // Прокручиваем к текущему слову
+                    currentWord.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'center'
+                    });
+                }
+                
+                // Обновляем прогресс
+                const progress = Math.round((currentIndex + 1) / words.length * 100);
+                updateProgress(progress);
+                
+                // Переходим к следующему слову
+                currentIndex++;
+                
+                // Если достигли конца
+                if (currentIndex >= words.length) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    
+                    readButton.disabled = false;
+                    stopButton.disabled = true;
+                    
+                    statusElement.textContent = 'Чтение завершено';
+                }
+            }
+            
+            // Обновление прогресса
+            function updateProgress(percent) {
+                progressElement.textContent = percent + '%';
+                progressBar.style.width = percent + '%';
+            }
+            
+            // Инициализация приложения
+            displayWords();
+        });
+    </script>
+</body>
 </html>
